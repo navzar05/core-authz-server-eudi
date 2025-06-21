@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Error - Authorization Server</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <style>
+    :root {
+      --primary-red: #dc2626;
+      --dark-red: #b91c1c;
+      --light-red: #fef2f2;
+      --text-dark: #1f2937;
+      --text-light: #6b7280;
+      --border-color: #e5e7eb;
+      --background: #ffffff;
+      --gray-bg: #f9fafb;
+      --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .error-container {
+      background: var(--background);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 520px;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .error-header {
+      background: linear-gradient(135deg, var(--primary-red) 0%, var(--dark-red) 100%);
+      color: white;
+      padding: 40px 30px;
+    }
+
+    .error-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+    }
+
+    .error-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.025em;
+    }
+
+    .error-header p {
+      font-size: 16px;
+      opacity: 0.9;
+      font-weight: 400;
+    }
+
+    .error-content {
+      padding: 40px 30px;
+    }
+
+    .error-message {
+      background: var(--light-red);
+      border: 1px solid #fca5a5;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+
+    .error-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark-red);
+      margin-bottom: 8px;
+    }
+
+    .error-description {
+      color: #991b1b;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .error-details {
+      background: var(--gray-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+      text-align: left;
+    }
+
+    .error-details h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .details-icon {
+      width: 16px;
+      height: 16px;
+      color: var(--text-light);
+    }
+
+    .error-info {
+      font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+      font-size: 13px;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    .error-info-item {
+      display: flex;
+      margin-bottom: 8px;
+    }
+
+    .error-info-label {
+      font-weight: 600;
+      color: var(--text-dark);
+      min-width: 80px;
+      margin-right: 12px;
+    }
+
+    .error-info-value {
+      flex: 1;
+      word-break: break-all;
+    }
+
+    .error-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-red) 0%, var(--dark-red) 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 15px -3px rgba(220, 38, 38, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--background);
+      color: var(--text-dark);
+      border: 2px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--primary-red);
+      color: var(--primary-red);
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .error-footer {
+      padding: 24px 30px;
+      background: var(--gray-bg);
+      border-top: 1px solid var(--border-color);
+      color: var(--text-light);
+      font-size: 13px;
+    }
+
+    .help-text {
+      margin-bottom: 12px;
+    }
+
+    .contact-info {
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+
+      .error-header {
+        padding: 30px 20px;
+      }
+
+      .error-header h1 {
+        font-size: 24px;
+      }
+
+      .error-content {
+        padding: 30px 20px;
+      }
+
+      .error-actions {
+        flex-direction: column;
+      }
+
+      .error-footer {
+        padding: 20px;
+      }
+
+      .error-details {
+        padding: 20px;
+      }
+    }
+
+    /* Focus styles for accessibility */
+    .btn:focus {
+      outline: 2px solid var(--primary-red);
+      outline-offset: 2px;
+    }
+
+    /* Animation for error icon */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    .error-icon {
+      animation: shake 0.5s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+<div class="error-container">
+  <div class="error-header">
+    <div class="error-icon">⚠️</div>
+    <h1>A apărut o eroare</h1>
+  </div>
+
+  <div class="error-content">
+    <div class="error-message">
+      <div class="error-title">Cererea nu a putut fi procesată</div>
+      <div class="error-description">
+        A intervenit o erorare. Poate fi o problemă temporară sau o problemă de configurare.
+      </div>
+    </div>
+
+    <div class="error-details" th:if="${status} or ${error} or ${path} or ${timestamp}">
+      <h3>
+        Detalii eroare
+      </h3>
+      <div class="error-info">
+        <div class="error-info-item" th:if="${status}">
+          <span class="error-info-label">Status:</span>
+          <span class="error-info-value" th:text="${status}">500</span>
+        </div>
+        <div class="error-info-item" th:if="${error}">
+          <span class="error-info-label">Error:</span>
+          <span class="error-info-value" th:text="${error}">Internal Server Error</span>
+        </div>
+        <div class="error-info-item" th:if="${path}">
+          <span class="error-info-label">Path:</span>
+          <span class="error-info-value" th:text="${path}">/</span>
+        </div>
+        <div class="error-info-item" th:if="${timestamp}">
+          <span class="error-info-label">Time:</span>
+          <span class="error-info-value" th:text="${#dates.format(timestamp, 'yyyy-MM-dd HH:mm:ss')}">-</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="error-footer">
+    <div class="help-text">
+      Daca eroarea persistă, contactați echipa de suport tehnic.
+    </div>
+    <div class="contact-info">
+      Cod de eroare: <span th:text="${#strings.substring(#dates.format(#dates.createNow(), 'yyyyMMddHHmmss'), -8)}">12345</span>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>

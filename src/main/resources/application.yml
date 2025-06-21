@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: base-authz-server
+
+  security:
+    oauth2:
+      authorizationserver:
+        issuer: https://192.168.1.137:9000
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: TRACE
+    ro.mta.authserver: DEBUG

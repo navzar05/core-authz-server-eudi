@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Cerere de consimțământ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <style>
+    :root {
+      --primary-red: #dc2626;
+      --dark-red: #b91c1c;
+      --light-red: #fef2f2;
+      --success-green: #059669;
+      --dark-green: #047857;
+      --text-dark: #1f2937;
+      --text-light: #6b7280;
+      --border-color: #e5e7eb;
+      --background: #ffffff;
+      --gray-bg: #f9fafb;
+      --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .consent-container {
+      background: var(--background);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 550px;
+      overflow: hidden;
+    }
+
+    .consent-header {
+      background: linear-gradient(135deg, var(--primary-red) 0%, var(--dark-red) 100%);
+      color: white;
+      text-align: center;
+      padding: 32px 30px;
+    }
+
+    .consent-header img {
+      max-width: 60px;
+      height: auto;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px;
+    }
+
+    .consent-header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      letter-spacing: -0.025em;
+    }
+
+    .consent-header h2 {
+      font-size: 14px;
+      opacity: 0.9;
+      font-weight: 400;
+      margin-bottom: 12px;
+    }
+
+    .consent-subtitle {
+      font-size: 16px;
+      opacity: 0.95;
+      font-weight: 500;
+    }
+
+    .consent-content {
+      padding: 32px 30px;
+    }
+
+    .consent-info {
+      background: var(--light-red);
+      border: 1px solid #fca5a5;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 28px;
+      border-left: 4px solid var(--primary-red);
+    }
+
+    .consent-info p {
+      margin: 0 0 8px 0;
+      color: var(--text-dark);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .consent-info p:last-child {
+      margin-bottom: 0;
+    }
+
+    .consent-info strong {
+      color: var(--dark-red);
+      font-weight: 600;
+    }
+
+    .permissions-section {
+      margin-bottom: 28px;
+    }
+
+    .permissions-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .permissions-icon {
+      width: 20px;
+      height: 20px;
+      color: var(--primary-red);
+    }
+
+    .scope-item {
+      background: var(--gray-bg);
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .scope-item:hover {
+      border-color: var(--primary-red);
+      background: var(--light-red);
+      transform: translateY(-1px);
+    }
+
+    .scope-item label {
+      display: flex;
+      align-items: flex-start;
+      cursor: pointer;
+      color: var(--text-dark);
+      font-weight: 500;
+    }
+
+    .scope-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-right: 12px;
+      margin-top: 2px;
+      accent-color: var(--primary-red);
+      cursor: pointer;
+    }
+
+    .scope-content {
+      flex: 1;
+    }
+
+    .scope-name {
+      font-weight: 600;
+      color: var(--primary-red);
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .scope-description {
+      font-size: 13px;
+      color: var(--text-light);
+      line-height: 1.4;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-approve {
+      background: linear-gradient(135deg, var(--success-green) 0%, var(--dark-green) 100%);
+      color: white;
+    }
+
+    .btn-approve:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 15px -3px rgba(5, 150, 105, 0.3);
+    }
+
+    .btn-deny {
+      background: linear-gradient(135deg, var(--primary-red) 0%, var(--dark-red) 100%);
+      color: white;
+    }
+
+    .btn-deny:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 15px -3px rgba(220, 38, 38, 0.3);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .security-notice {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      border-left: 4px solid #ea580c;
+    }
+
+    .security-notice p {
+      margin: 0;
+      color: #9a3412;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .security-notice strong {
+      color: #7c2d12;
+      font-weight: 600;
+    }
+
+    .form-container {
+      flex: 1;
+    }
+
+    .form-container form {
+      height: 100%;
+    }
+
+    .form-container .btn {
+      width: 100%;
+      height: 100%;
+      min-height: 48px;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .consent-header {
+        padding: 24px 20px;
+      }
+
+      .consent-header h1 {
+        font-size: 18px;
+      }
+
+      .consent-header h2 {
+        font-size: 13px;
+      }
+
+      .consent-subtitle {
+        font-size: 15px;
+      }
+
+      .consent-content {
+        padding: 24px 20px;
+      }
+
+      .scope-item {
+        padding: 14px;
+      }
+
+      .btn {
+        padding: 12px 16px;
+        font-size: 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 8px;
+      }
+
+      .consent-header {
+        padding: 20px 15px;
+      }
+
+      .consent-header h1 {
+        font-size: 16px;
+      }
+
+      .consent-header h2 {
+        font-size: 12px;
+      }
+
+      .consent-subtitle {
+        font-size: 14px;
+      }
+
+      .consent-content {
+        padding: 20px 15px;
+      }
+
+      .consent-info {
+        padding: 16px;
+      }
+
+      .scope-item {
+        padding: 12px;
+      }
+
+      .btn {
+        padding: 12px 14px;
+        font-size: 14px;
+      }
+
+      .button-group {
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+
+    @media (max-height: 500px) and (orientation: landscape) {
+      body {
+        align-items: flex-start;
+        padding-top: 10px;
+      }
+
+      .consent-container {
+        margin: 10px 0;
+      }
+
+      .consent-header {
+        padding: 16px 20px;
+      }
+
+      .consent-header img {
+        max-width: 40px;
+        margin-bottom: 8px;
+      }
+
+      .consent-content {
+        padding: 20px;
+      }
+
+      .scope-item {
+        padding: 10px;
+        margin-bottom: 8px;
+      }
+    }
+
+    .btn:focus,
+    .scope-item input:focus {
+      outline: 2px solid var(--primary-red);
+      outline-offset: 2px;
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      .btn {
+        min-height: 48px;
+      }
+
+      .scope-item input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="consent-container">
+  <div class="consent-header">
+    <img th:src="@{/logo.png}" alt="Logo"/>
+    <h1>Numele instituției</h1>
+    <h2></h2>
+    <div class="consent-subtitle">Cerere de acces</div>
+  </div>
+
+  <div class="consent-content">
+    <div class="consent-info">
+      <p>Bună ziua, <strong th:text="${principalName}">User</strong>!</p>
+      <p><strong th:text="${clientId}">Application</strong> cere acces la informațiile tale.</p>
+    </div>
+
+    <div class="permissions-section">
+      <div class="permissions-title">
+        <svg class="permissions-icon" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        Permisiuni cerute
+      </div>
+      <div th:each="scope : ${scopes}" class="scope-item">
+        <label>
+          <input type="checkbox" th:value="${scope}" name="scope" checked readonly>
+          <div class="scope-content">
+            <div class="scope-name" th:text="${scope.split('\.')[scope.split('\.').length - 1]}">Permisiune</div>
+            <div class="scope-description">Descriere permisiune</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <!-- Approve Form -->
+      <div class="form-container">
+        <form method="post" th:action="@{/oauth2/authorize}">
+          <input type="hidden" name="client_id" th:value="${clientId}">
+          <input type="hidden" name="state" th:value="${state}">
+          <input type="hidden" name="user_code" th:value="${userCode}">
+
+          <div th:each="scope : ${scopes}">
+            <input type="hidden" name="scope" th:value="${scope}">
+          </div>
+
+          <button type="submit" name="user_oauth_approval" value="true" class="btn btn-approve">
+            Acceptă
+          </button>
+        </form>
+      </div>
+
+      <!-- Deny Form -->
+      <div class="form-container">
+        <form method="post" th:action="@{/oauth2/authorize}">
+          <input type="hidden" name="client_id" th:value="${clientId}">
+          <input type="hidden" name="state" th:value="${state}">
+          <input type="hidden" name="user_code" th:value="${userCode}">
+
+          <button type="submit" name="user_oauth_approval" value="false" class="btn btn-deny">
+            Refuză
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="security-notice">
+      <p><strong>Notă:</strong> Permite accesul doar clienților și aplicațiilor de încredere.</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>
