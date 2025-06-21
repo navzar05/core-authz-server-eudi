@@ -2,14 +2,33 @@
 
 This is an implementation of the core functionalities of an authorization server. It is designed to reside on the authentic source side.
 
-To use it, you first have to add it in the ```pom.xml``` file, then extend the following classes:
+First of all, you need to add this in your `pom.xml` file:
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
+And, in the `<dependencies>` group, add:
+```xml
+<dependency>
+    <groupId>com.github.navzar05</groupId>
+    <artifactId>core-authz-server-eudi</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+Note that the version tag needs to be changed accordingly to the latest release.
+
+The next step is to implement the following interfaces of the `core-authz-server-eudi`:
 
 - `BaseUser`
 - `BaseUserDetails` (`@Entity`)
 - `BaseUserRepository<User>` (`@Repository`)
 - `BaseUserDetailsService` (`@Service`)
 
-Then, you have to add the following lines above your Spring Boot main function:
+After that, you have to add the following lines above your Spring Boot main function:
 
 ```java
 @SpringBootApplication(scanBasePackages = {
@@ -25,7 +44,7 @@ Then, you have to add the following lines above your Spring Boot main function:
         "ro.mta.baseauthzserver.repository"
 })
 ```
-Lastly, if you don't want to use the default HTML templates, you have to add the new ones in the `main/java/resources/templates` folder of your project. The templates offered by default are:
+Now, the server is ready to go. If you don't want to use the default HTML templates, you have to add the new ones in the `main/java/resources/templates` folder of your project. The templates offered by default are:
 
 - `login.html`
 - `consent.html`
