@@ -207,35 +207,31 @@ public class AuthorizationServerConfig {
 
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
-        KeyPair keyPair = generateEcKey();
-        ECPublicKey publicKey = (ECPublicKey) keyPair.getPublic();
-        ECPrivateKey privateKey = (ECPrivateKey) keyPair.getPrivate();
+        KeyPair keyPair = generateRsaKey();
+        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+        RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
 
-        ECKey ecKey = new ECKey.Builder(Curve.P_256, publicKey)
+        RSAKey rsaKey = new RSAKey.Builder(publicKey)
                 .privateKey(privateKey)
                 .keyID(UUID.randomUUID().toString())
                 .build();
 
-        JWKSet jwkSet = new JWKSet(ecKey);
+        JWKSet jwkSet = new JWKSet(rsaKey);
         return new ImmutableJWKSet<>(jwkSet);
     }
 
-    private static KeyPair generateEcKey() {
+    private static KeyPair generateRsaKey() {
         KeyPair keyPair;
         try {
-            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC");
-
-            // Specify the secp256r1 curve (also known as prime256v1 or P-256)
-            ECGenParameterSpec ecSpec = new ECGenParameterSpec("secp256r1");
-            keyPairGenerator.initialize(ecSpec);
-
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(4096);
             keyPair = keyPairGenerator.generateKeyPair();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw new IllegalStateException(ex);
         }
         return keyPair;
     }
+
 
     @Bean
     public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
