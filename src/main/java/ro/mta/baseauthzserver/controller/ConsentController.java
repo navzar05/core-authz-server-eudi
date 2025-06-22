@@ -30,7 +30,6 @@ public class ConsentController {
     public String consent(Principal principal, Model model,
                           HttpServletRequest request) {
 
-        // Get all parameters from the original authorization request
         Map<String, String[]> parameterMap = request.getParameterMap();
 
         String clientId = request.getParameter(OAuth2ParameterNames.CLIENT_ID);
@@ -71,7 +70,6 @@ public class ConsentController {
             HttpServletRequest request) {
 
         if (scopes != null && !scopes.isEmpty()) {
-            // Build redirect URL for approval
             StringBuilder redirectUrl = new StringBuilder("/oauth2/authorize");
             redirectUrl.append("?client_id=").append(clientId);
             redirectUrl.append("&state=").append(state);

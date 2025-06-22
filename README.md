@@ -28,6 +28,56 @@ The next step is to implement the following interfaces of the `core-authz-server
 - `BaseUserRepository<User>` (`@Repository`)
 - `BaseUserDetailsService` (`@Service`)
 
+You also have to configure the registered clients and the password encoder. Here is an example:
+
+```java
+@Configuration
+public class AuthorizationConfig {
+    @Bean
+    RegisteredClientRepository registeredClientRepository() {
+        RegisteredClient issuerClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                .clientId("issuer-srv")
+                .clientSecret(passwordEncoder().encode("<secret>"))
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                .scope(OidcScopes.OPENID)
+                .scope(OidcScopes.PROFILE)
+                .scope("<scope>")
+                .scope("issuer:credentials")
+                .build();
+
+        RegisteredClient eudiWalletClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                .clientId("wallet-dev")
+                .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .authorizationGrantType(new AuthorizationGrantType("urn:ietf:params:oauth:grant-type:pre-authorized_code"))
+                .redirectUri("eu.europa.ec.euidi://authorization")
+                .scope(OidcScopes.OPENID)
+                .scope(OidcScopes.PROFILE)
+                .scope("org.certsign.university_graduation_sdjwt")
+                .clientSettings(ClientSettings.builder()
+                        .requireAuthorizationConsent(true)
+                        .requireProofKey(true)
+                        .build())
+                .tokenSettings(TokenSettings.builder()
+                        .accessTokenTimeToLive(Duration.ofMinutes(1))
+                        .refreshTokenTimeToLive(Duration.ofMinutes(1))
+                        .reuseRefreshTokens(false)
+                        .build())
+                .build();
+
+        return new InMemoryRegisteredClientRepository(issuerClient, eudiWalletClient);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+}
+
+```
+
 After that, you have to add the following lines above your Spring Boot main function:
 
 ```java

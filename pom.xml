@@ -7,7 +7,7 @@
 
     <groupId>ro.mta</groupId>
     <artifactId>core-authz-server</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.3</version>
     <packaging>jar</packaging>
 
     <name>Base EUDI Authorization Server</name>

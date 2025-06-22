@@ -6,7 +6,9 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -119,7 +121,7 @@ public class AuthorizationServerConfig {
             HttpSecurity http,
             OAuth2AuthorizationService authorizationService,
             OAuth2TokenGenerator<?> tokenGenerator,
-            RegisteredClientRepository registeredClientRepository, PreAuthorizedCodeService preAuthorizedCodeService) throws Exception {
+            @Autowired(required = false) RegisteredClientRepository registeredClientRepository, PreAuthorizedCodeService preAuthorizedCodeService) throws Exception {
 
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 
@@ -168,42 +170,42 @@ public class AuthorizationServerConfig {
         return http.build();
     }
 
-    @Bean
-    public RegisteredClientRepository registeredClientRepository() {
-        // Client for the credential issuer service
-        RegisteredClient issuerClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("issuer-srv")
-                .clientSecret(passwordEncoder().encode("zIKAV9DIIIaJCzHCVBPlySgU8KgY68U2"))
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                .scope(OidcScopes.OPENID)
-                .scope(OidcScopes.PROFILE)
-                .scope("org.certsign.university_graduation_sdjwt")
-                .scope("issuer:credentials")
-                .build();
-
-        RegisteredClient eudiWalletClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("wallet-dev")
-                .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(new AuthorizationGrantType("urn:ietf:params:oauth:grant-type:pre-authorized_code"))
-                .redirectUri("eu.europa.ec.euidi://authorization")
-                .scope(OidcScopes.OPENID)
-                .scope(OidcScopes.PROFILE)
-                .scope("org.certsign.university_graduation_sdjwt")
-                .clientSettings(ClientSettings.builder()
-                        .requireAuthorizationConsent(true)
-                        .requireProofKey(true)
-                        .build())
-                .tokenSettings(TokenSettings.builder()
-                        .accessTokenTimeToLive(Duration.ofMinutes(1))
-                        .refreshTokenTimeToLive(Duration.ofMinutes(1))
-                        .reuseRefreshTokens(false)
-                        .build())
-                .build();
-
-        return new InMemoryRegisteredClientRepository(issuerClient, eudiWalletClient);
-    }
+//    @ConditionalOnMissingBean
+//    public RegisteredClientRepository registeredClientRepository() {
+//        // Client for the credential issuer service
+//        RegisteredClient issuerClient = RegisteredClient.withId(UUID.randomUUID().toString())
+//                .clientId("issuer-srv")
+//                .clientSecret(passwordEncoder().encode("zIKAV9DIIIaJCzHCVBPlySgU8KgY68U2"))
+//                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+//                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+//                .scope(OidcScopes.OPENID)
+//                .scope(OidcScopes.PROFILE)
+//                .scope("org.certsign.university_graduation_sdjwt")
+//                .scope("issuer:credentials")
+//                .build();
+//
+//        RegisteredClient eudiWalletClient = RegisteredClient.withId(UUID.randomUUID().toString())
+//                .clientId("wallet-dev")
+//                .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
+//                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+//                .authorizationGrantType(new AuthorizationGrantType("urn:ietf:params:oauth:grant-type:pre-authorized_code"))
+//                .redirectUri("eu.europa.ec.euidi://authorization")
+//                .scope(OidcScopes.OPENID)
+//                .scope(OidcScopes.PROFILE)
+//                .scope("org.certsign.university_graduation_sdjwt")
+//                .clientSettings(ClientSettings.builder()
+//                        .requireAuthorizationConsent(true)
+//                        .requireProofKey(true)
+//                        .build())
+//                .tokenSettings(TokenSettings.builder()
+//                        .accessTokenTimeToLive(Duration.ofMinutes(1))
+//                        .refreshTokenTimeToLive(Duration.ofMinutes(1))
+//                        .reuseRefreshTokens(false)
+//                        .build())
+//                .build();
+//
+//        return new InMemoryRegisteredClientRepository(issuerClient, eudiWalletClient);
+//    }
 
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
@@ -252,11 +254,6 @@ public class AuthorizationServerConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     public OAuth2AuthorizationService authorizationService() {
         return new InMemoryOAuth2AuthorizationService();
     }
@@ -272,8 +269,9 @@ public class AuthorizationServerConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(
-            UserDetailsService userDetailsService,
-            PasswordEncoder passwordEncoder) {
+            @Autowired(required = false) UserDetailsService userDetailsService,
+            @Autowired(required = false) PasswordEncoder passwordEncoder) {
+
 
         DaoAuthenticationProvider daoAuthProvider = new DaoAuthenticationProvider();
         daoAuthProvider.setUserDetailsService(userDetailsService);
