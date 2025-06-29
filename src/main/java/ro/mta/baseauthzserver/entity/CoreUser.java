@@ -1,12 +1,11 @@
 package ro.mta.baseauthzserver.entity;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
- * Base interface that all BaseUser entities must implement
+ * Base interface that all CoreUser entities must implement
  */
-public interface BaseUser {
+public interface CoreUser {
 
     String getUsername();
     void setUsername(String username);

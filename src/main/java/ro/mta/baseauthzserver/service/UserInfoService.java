@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ro.mta.baseauthzserver.controller.UserInfoController;
-import ro.mta.baseauthzserver.entity.BaseUser;
-import ro.mta.baseauthzserver.repository.BaseUserRepository;
+import ro.mta.baseauthzserver.entity.CoreUser;
+import ro.mta.baseauthzserver.repository.CoreUserRepository;
 
 import java.util.Map;
 import java.util.Optional;
@@ -21,7 +21,7 @@ public class UserInfoService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserInfoController.class);
 
-    private final BaseUserRepository baseUserRepository;
+    private final CoreUserRepository coreUserRepository;
 
     private final ObjectMapper objectMapper;
 
@@ -30,25 +30,25 @@ public class UserInfoService {
             "accountNonLocked", "credentialsNonExpired", "enabled", "id", "roles", "role"
     );
     
-    public UserInfoService(@Autowired(required = false) BaseUserRepository baseUserRepository) {
-        this.baseUserRepository = baseUserRepository;
+    public UserInfoService(@Autowired(required = false) CoreUserRepository coreUserRepository) {
+        this.coreUserRepository = coreUserRepository;
         this.objectMapper = new ObjectMapper();
     }
 
     public Map<String, Object> getUserInfo(final String username) {
-        if (baseUserRepository == null) {
-            throw new IllegalStateException("No BaseUserRepository implementation found");
+        if (coreUserRepository == null) {
+            throw new IllegalStateException("No CoreUserRepository implementation found");
         }
         
 
-        Optional<BaseUser> userOpt = baseUserRepository.findByUsername(username);
+        Optional<CoreUser> userOpt = coreUserRepository.findByUsername(username);
 
         if (userOpt.isEmpty()) {
             logger.warn("User not found: {}", username);
             return null;
         }
 
-        BaseUser user = userOpt.get();
+        CoreUser user = userOpt.get();
 
         logger.debug("UserInfo request for user: {}", user.getUsername());
 

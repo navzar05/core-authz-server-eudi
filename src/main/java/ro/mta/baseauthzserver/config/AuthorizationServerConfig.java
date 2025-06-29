@@ -78,11 +78,7 @@ public class AuthorizationServerConfig {
             throws Exception {
         http
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/actuator/**", "/oauth2/**", "/.well-known/**", "/token/**"
-                                , "/atm.JPG", "atm-logo.png", "/error").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/userinfo").authenticated()
+                        .requestMatchers("/atm.JPG", "/atm-logo.png").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptions -> exceptions
@@ -97,20 +93,12 @@ public class AuthorizationServerConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .defaultSuccessUrl("/oauth2/consent")
                         .permitAll()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(Customizer.withDefaults())
-                )
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/h2-console/**", "/oauth2/**",
-                                "/credential-offer/**", "/token/**", "/pre-authorize/**")
                 );
-
-        // Allow H2 console frames
-        http.headers(
-                headers -> headers.frameOptions(
-                        frameOptions -> frameOptions.sameOrigin()));
 
         return http.build();
     }
@@ -169,43 +157,6 @@ public class AuthorizationServerConfig {
 
         return http.build();
     }
-
-//    @ConditionalOnMissingBean
-//    public RegisteredClientRepository registeredClientRepository() {
-//        // Client for the credential issuer service
-//        RegisteredClient issuerClient = RegisteredClient.withId(UUID.randomUUID().toString())
-//                .clientId("issuer-srv")
-//                .clientSecret(passwordEncoder().encode("zIKAV9DIIIaJCzHCVBPlySgU8KgY68U2"))
-//                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-//                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-//                .scope(OidcScopes.OPENID)
-//                .scope(OidcScopes.PROFILE)
-//                .scope("org.certsign.university_graduation_sdjwt")
-//                .scope("issuer:credentials")
-//                .build();
-//
-//        RegisteredClient eudiWalletClient = RegisteredClient.withId(UUID.randomUUID().toString())
-//                .clientId("wallet-dev")
-//                .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
-//                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-//                .authorizationGrantType(new AuthorizationGrantType("urn:ietf:params:oauth:grant-type:pre-authorized_code"))
-//                .redirectUri("eu.europa.ec.euidi://authorization")
-//                .scope(OidcScopes.OPENID)
-//                .scope(OidcScopes.PROFILE)
-//                .scope("org.certsign.university_graduation_sdjwt")
-//                .clientSettings(ClientSettings.builder()
-//                        .requireAuthorizationConsent(true)
-//                        .requireProofKey(true)
-//                        .build())
-//                .tokenSettings(TokenSettings.builder()
-//                        .accessTokenTimeToLive(Duration.ofMinutes(1))
-//                        .refreshTokenTimeToLive(Duration.ofMinutes(1))
-//                        .reuseRefreshTokens(false)
-//                        .build())
-//                .build();
-//
-//        return new InMemoryRegisteredClientRepository(issuerClient, eudiWalletClient);
-//    }
 
     @Bean
     public JWKSource<SecurityContext> jwkSource() {

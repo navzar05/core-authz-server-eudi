@@ -1,17 +1,15 @@
 package ro.mta.baseauthzserver.model;
 
 import org.springframework.security.core.userdetails.UserDetails;
-import ro.mta.baseauthzserver.entity.BaseUser;
-
-import java.util.Set;
+import ro.mta.baseauthzserver.entity.CoreUser;
 
 /**
  * Extended UserDetails for EUDI authorization server
  */
-public interface BaseUserDetails extends UserDetails {
+public interface CoreUserDetails extends UserDetails {
 
     // Get the underlying user entity
-    BaseUser getUser();
+    CoreUser getUser();
 //
 //    // EUDI specific methods
 //    String getDidIdentifier();
